@@ -5,8 +5,10 @@
 # BOX = "boxesio/wheezy64-ansible"
 # BOX = "wheezy-vmware"
 BOX = "geerlingguy/ubuntu1404"
-RAM = "512"
+RAM = "256"
 CPUs = "1"
+
+ENV['VAGRANT_VMWARE_CLONE_DIRECTORY'] = '~/Projects/DevOps/Clone/'
 
 Vagrant.configure(2) do |config|
   config.vm.box = BOX
@@ -26,6 +28,7 @@ Vagrant.configure(2) do |config|
   config.vm.define :varnish do |varnish_config|
     varnish_config.vm.hostname = "varnish.dev"
     varnish_config.vm.network :private_network, ip: "192.168.55.11"
+    #varnish_config.vm.provision "shell", inline: "sudo apt-get update -y"
   end
 
   config.vm.define :web1 do |web1_config|
@@ -48,16 +51,23 @@ Vagrant.configure(2) do |config|
     db2_config.vm.network :private_network, ip: "192.168.55.55"
   end
 
+  config.vm.define :memcached do |memcached_config|
+    memcached_config.vm.hostname = "memcached.dev"
+    memcached_config.vm.network :private_network, ip: "192.168.55.66"
+  end
+
    config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook.yml"
     #ansible.inventory_path = "inventories/vagrant/inventory"
+    ansible.inventory_path = "/Users/lbhurtado/PhpstormProjects/lamppp/inventories/vagrant/vagrant_ansible_inventory"
     ansible.sudo = "true"
     ansible.verbose = "vv"
     ansible.limit = "all"
-    ansible.extra_vars = {
-      ansible_ssh_user: 'vagrant',
-      ansible_ssh_private_key_file: "~/.vagrant.d/insecure_private_key"
-    }
+    #ansible.extra_vars = {
+    #  ansible_ssh_user: 'vagrant',
+    #  ansible_ssh_ports: '22',
+    #  ansible_ssh_private_key_file: "~/.vagrant.d/insecure_private_key"
+    #}
   end
 
 end

@@ -4,7 +4,6 @@
 - name: apply common configuration to all nodes
   hosts: all
   sudo: true
-  remote_user: root
-  pre_tasks:
-    - name: update apt cache
-      apt: update_cache=yes
+  #pre_tasks:
+  #  - name: update apt cache
+  #    apt: update_cache=yes
